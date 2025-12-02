@@ -75,8 +75,8 @@ pipeline{
         }
         stage ('Results'){
             steps{
-                untash name 'resultado-unit'
-                untash 'resultado-rest'
+                untash name: 'resultado-unit'
+                untash name: 'resultado-rest'
                 junit 'result*.xml'
             }
         }
