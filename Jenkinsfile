@@ -27,7 +27,7 @@ pipeline{
                 stage('UNIT'){
                     steps{
                         sh '''
-                            set PYTHONPATH=.
+                            export PYTHONPATH=.
                             pytest --junitxml=result-unit.xml app/unit
                         '''
                     }
