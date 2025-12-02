@@ -41,12 +41,13 @@ pipeline{
                 stage('UNIT'){
                     agent { label 'agent1' }
                     steps{
+                        unstash name: 'codigo'
                         sh '''
                             echo ${WORKSPACE}
                             whoami
                             hostname
-                            export PYTHONPATH=.
-                            pytest --junitxml=result-unit.xml test/unit
+                            export PYTHONPATH=${WORKSPACE}
+                            /home/oscar/unir_projects/jenkins/agent1/.local/pytest --junitxml=result-unit.xml test/unit
                         '''
                         stash includes: 'result-unit.xml', name: 'resultado-unit'
                     }
@@ -55,16 +56,17 @@ pipeline{
                 stage('REST'){
                     agent { label 'agent2' }
                     steps{
+                        unstash name: 'codigo'
                         sh '''
                             echo ${WORKSPACE}
                             whoami
                             hostname
                             export FLASK_APP=app/api.py
-                            flask run &
-                            java -jar /opt/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
+                            /home/oscar/unir_projects/jenkins/agent2/.local/flask run &
+                            java -jar /home/oscar/unir_projects/jenkins/agent2/wiremock-standalone-3.13.2.jar --port 9090 --root-dir /home/oscar/unir_projects/jenkins/agent2/wiremock &
                             export PYTHONPATH=$WORKSPACE
                             sleep 10
-                            pytest --junitxml=result-rest.xml test/rest                   
+                            /home/oscar/unir_projects/jenkins/agent2/.local/bin/pytest --junitxml=result-rest.xml test/rest                   
                         '''
                         stash includes: 'result-rest.xml', name: 'resultado-rest'
                     }
