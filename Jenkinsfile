@@ -1,0 +1,53 @@
+pipeline{
+    // Cualquier agente disponible para ejecutar el pipeline
+    agent any
+
+    // Estapas del pipeline
+    stages{
+
+        //Etapa para obtener el código fuente
+        stage('GET CODE'){
+            // Paso para clonar el repositorio Git
+            steps{
+                git 'https://github.com/OscarNFP/cp1.1.git'
+                sh 'echo $WORKSPACE'
+            }
+        }
+
+        // Etapa de construcción del proyecto
+        stage('BUILD'){
+            steps{
+                sh 'echo "No hacemos nada, Python no necesita compilación"'
+            }
+
+        }
+        stage('UNIT'){
+            steps{
+                sh '''
+                    set PYTHONPATH=.
+                    pytest --junitxml=result-unit.xml app/unit
+                '''
+            }
+
+        }
+        stage('SERVICE'){
+            steps{
+                sh '''
+                    export FLASK_APP=app/api.py
+                    flask run &
+                    java -jar /opt/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
+                    export PYTHONPATH=$WORKSPACE
+                    sleep 10
+                    pytest --junitxml=result-service.xml test/unit                    
+                '''
+            }
+        }
+        stage ('Results'){
+            steps{
+                junit 'result*.xml'
+            }
+        }
+    }
+
+    //
+}
