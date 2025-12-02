@@ -28,7 +28,7 @@ pipeline{
                     steps{
                         sh '''
                             export PYTHONPATH=.
-                            pytest --junitxml=result-unit.xml app/unit
+                            pytest --junitxml=result-unit.xml test/unit
                         '''
                     }
 
