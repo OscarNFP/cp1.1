@@ -21,25 +21,30 @@ pipeline{
             }
 
         }
-        stage('UNIT'){
-            steps{
-                sh '''
-                    export PYTHONPATH=.
-                    pytest --junitxml=result-unit.xml test/unit
-                '''
-            }
+        stage('TEST'){
+            parallel
+            {
+                stage('UNIT'){
+                    steps{
+                        sh '''
+                            set PYTHONPATH=.
+                            pytest --junitxml=result-unit.xml app/unit
+                        '''
+                    }
 
-        }
-        stage('SERVICE'){
-            steps{
-                sh '''
-                    export FLASK_APP=app/api.py
-                    flask run &
-                    java -jar /opt/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
-                    export PYTHONPATH=$WORKSPACE
-                    sleep 10
-                    pytest --junitxml=result-service.xml test/unit                    
-                '''
+                }
+                stage('SERVICE'){
+                    steps{
+                        sh '''
+                            export FLASK_APP=app/api.py
+                            flask run &
+                            java -jar /opt/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
+                            export PYTHONPATH=$WORKSPACE
+                            sleep 10
+                            pytest --junitxml=result-service.xml test/unit                    
+                        '''
+                    }
+                }
             }
         }
         stage ('Results'){
