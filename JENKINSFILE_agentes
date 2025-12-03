@@ -62,7 +62,7 @@ pipeline{
                             whoami
                             hostname
                             export FLASK_APP=app/api.py
-                            ${WORKSPACE}/flask run &
+                            flask run &
                             java -jar /opt/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
                             export PYTHONPATH=$WORKSPACE
                             sleep 10
