@@ -41,13 +41,13 @@ pipeline{
                 stage('UNIT'){
                     agent { label 'agent1' }
                     steps{
-                        unstash name: 'codigo'
+                        unstash name:'codigo'
                         sh '''
                             echo ${WORKSPACE}
                             whoami
                             hostname
                             export PYTHONPATH=${WORKSPACE}
-                            ${WORKSPACE}/pytest --junitxml=result-unit.xml test/unit
+                            pytest --junitxml=result-unit.xml test/unit
                         '''
                         stash includes: 'result-unit.xml', name: 'resultado-unit'
                     }
@@ -56,17 +56,17 @@ pipeline{
                 stage('REST'){
                     agent { label 'agent2' }
                     steps{
-                        unstash name: 'codigo'
+                        unstash name:'codigo'
                         sh '''
                             echo ${WORKSPACE}
                             whoami
                             hostname
                             export FLASK_APP=app/api.py
                             ${WORKSPACE}/flask run &
-                            java -jar /home/oscar/unir_projects/jenkins/agent2/wiremock-standalone-3.13.2.jar --port 9090 --root-dir /home/oscar/unir_projects/jenkins/agent2/wiremock &
+                            java -jar /opt/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
                             export PYTHONPATH=$WORKSPACE
                             sleep 10
-                            ${WORKSPACE}/pytest --junitxml=result-rest.xml test/rest                   
+                            pytest --junitxml=result-rest.xml test/rest                   
                         '''
                         stash includes: 'result-rest.xml', name: 'resultado-rest'
                     }
@@ -75,8 +75,8 @@ pipeline{
         }
         stage ('Results'){
             steps{
-                untash name: 'resultado-unit'
-                untash name: 'resultado-rest'
+                unstash name: 'resultado-unit'
+                unstash name: 'resultado-rest'
                 junit 'result*.xml'
             }
         }
