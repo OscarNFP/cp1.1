@@ -14,12 +14,13 @@ pipeline{
             // Paso para clonar el repositorio Git
             steps{
         //        git 'https://github.com/OscarNFP/cp1.1.git'
+                  git branch: 'develop', url: 'https://github.com/OscarNFP/cp1.1.git'
                 sh '''
                     echo ${WORKSPACE}
                     whoami
                     hostname
                 '''
-        //        stash includes: '**', name: 'codigo'
+                stash includes: '**', name: 'codigo'
             }
         }
 
