@@ -35,7 +35,7 @@ class TestApi(unittest.TestCase):
             response.read().decode(), "1", "ERROR SUBSTRACT"
         )
 
-    def test_api_substract(self):
+    def test_api_multiply(self):
         url = f"{BASE_URL}/calc/multiply/2/2"
         response = urlopen(url, timeout=DEFAULT_TIMEOUT)
         self.assertEqual(
@@ -45,7 +45,7 @@ class TestApi(unittest.TestCase):
             response.read().decode(), "4", "ERROR MULTIPLY"
         )
 
-    def test_api_substract(self):
+    def test_api_divide(self):
         url = f"{BASE_URL}/calc/divide/4/2"
         response = urlopen(url, timeout=DEFAULT_TIMEOUT)
         self.assertEqual(
