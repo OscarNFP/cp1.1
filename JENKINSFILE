@@ -6,14 +6,14 @@ pipeline{
     stages{
 
         //Etapa para obtener el código fuente
-        stage('GET CODE'){
+        '''stage('GET CODE'){
             // Paso para clonar el repositorio Git
             steps{
                 git 'https://github.com/OscarNFP/cp1.1.git'
                 sh 'echo $WORKSPACE'
             }
         }
-
+'''
         // Etapa de construcción del proyecto
         stage('BUILD'){
             steps{
