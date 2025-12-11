@@ -42,6 +42,7 @@ pipeline{
                             flask run &
                             java -jar /var/jenkins_home/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
                             export PYTHONPATH=$WORKSPACE
+                            sleep 15 
                             pytest --junitxml=result-rest.xml test/rest                   
                         '''
                     }
