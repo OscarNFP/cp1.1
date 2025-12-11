@@ -9,6 +9,7 @@ pipeline{
         stage('GET CODE'){
             // Paso para clonar el repositorio Git
             steps{
+                checkout scm
                 sh '''
                 echo "Aquí se clona el repositorio Git. Jenkins ya lo hace por defecto"
                 echo $WORKSPACE
@@ -23,25 +24,28 @@ pipeline{
             }
 
         }
-        stage('UNIT'){
-            steps{
-                sh '''
-                    export PYTHONPATH=.
-                    pytest --junitxml=result-unit.xml test/unit
-                '''
-            }
+        stage('TEST'){
+            parallel{
+                stage('UNIT'){
+                    steps{
+                        sh '''
+                            export PYTHONPATH=.
+                            pytest --junitxml=result-unit.xml test/unit
+                        '''
+                    }
 
-        }
-        stage('REST'){
-            steps{
-                sh '''
-                    export FLASK_APP=app/api.py
-                    flask run &
-                    java -jar /var/jenkins_home/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
-                    export PYTHONPATH=$WORKSPACE
-                    pytest --junitxml=result-rest.xml test/rest                   
-                '''
-            }
+                }
+                stage('REST'){
+                    steps{
+                        sh '''
+                            export FLASK_APP=app/api.py
+                            flask run &
+                            java -jar /var/jenkins_home/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
+                            export PYTHONPATH=$WORKSPACE
+                            pytest --junitxml=result-rest.xml test/rest                   
+                        '''
+                    }
+                }
         }
         stage ('Results'){
             steps{
