@@ -43,7 +43,7 @@ pipeline{
                             whoami
                             hostname
                             export PYTHONPATH=${WORKSPACE}
-                            pytest test/unit
+                            pytest --junitxml=result-unit.xml test/unit
                         '''
                     }
 
@@ -57,10 +57,17 @@ pipeline{
                             flask run &
                             java -jar /var/jenkins_home/wiremock-standalone-3.13.2.jar --port 9090 --root-dir test/wiremock &
                             export PYTHONPATH=$WORKSPACE
-                            pytest test/rest                   
+                            pytest --junitxml=result-rest.xml test/rest                   
                         '''
                     }
                 }
+            }
+        }
+        stage ('Results'){
+            steps{
+                unstash name:'result-unit'
+                unstash name:'result-rest'
+                junit 'result-*.xml'
             }
         }
     }
