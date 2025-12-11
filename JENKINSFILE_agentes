@@ -34,7 +34,7 @@ pipeline{
         stage('TEST'){
             parallel{
                 stage('UNIT'){
-                    agent (label 'agent1')
+                    agent {label 'agent1'}
                     steps{
                         unstash name:'code'
                         sh '''
@@ -45,7 +45,7 @@ pipeline{
 
                 }
                 stage('REST'){
-                    agent (label 'agent2')
+                    agent {label 'agent2'}
                     steps{
                         unstash name:'code'
                         sh '''
