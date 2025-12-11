@@ -9,9 +9,9 @@ pipeline{
         stage('GET CODE'){
             // Paso para clonar el repositorio Git
             steps{
+                git 'https://github.com/OscarNFP/cp1.1.git'
                 sh '''
                 echo "Aquí se clona el repositorio Git. Jenkins ya lo hace por defecto"
-                git https://github.com/OscarNFP/cp1.1.git
                 echo $WORKSPACE
                 whoami
                 hostname
