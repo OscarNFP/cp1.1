@@ -15,8 +15,8 @@ pipeline{
                 echo $WORKSPACE
                 whoami
                 hostname
-                stash name:'code', includes:'**'
                 '''
+                stash name:'code', includes:'**'
             }
         }
 
